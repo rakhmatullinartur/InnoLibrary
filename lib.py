@@ -60,7 +60,7 @@ class Faculty(Patron):
 
 
 class Student(Patron):
-
+    pass
 
 
 class Librarian(User):
