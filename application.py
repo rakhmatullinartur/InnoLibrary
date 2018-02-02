@@ -87,6 +87,8 @@ class Example(QWidget):
         for i in range(layout.count()):
             layout.itemAt(i).widget().close()
 
+        print('test')
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Example()
