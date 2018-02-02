@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-
+import base
 app = Flask(__name__)
 
 endpoint = '/innoLibrary/api'
@@ -24,6 +24,11 @@ tasks = [
 @app.route(endpoint, methods=['GET'])
 def get_tasks():
     return jsonify({'tasks': tasks})
+
+
+@app.route(endpoint + '/create_user', methods=['GET'])
+def check_login():
+    pass
 
 
 if __name__ == '__main__':
