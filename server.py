@@ -5,34 +5,16 @@ app = Flask(__name__)
 endpoint = '/innoLibrary/api'
 
 
-tasks = [
-    {
-        'id': 1,
-        'title': u'Buy groceries',
-        'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
-        'done': False
-    },
-    {
-        'id': 2,
-        'title': u'Learn Python',
-        'description': u'Need to find a good Python tutorial on the web',
-        'done': False
-    }
-]
-
-
-@app.route(endpoint, methods=['GET'])
-def get_tasks():
-    return jsonify({'tasks': tasks})
-
-
-@app.route(endpoint + '/create_user', methods=['GET'])
-def create_user():
-    login = request.args.get('login')
-    password = request.args.get('password')
-    u_type = request.args.get('type')
-
-    return 'completed'
+@app.route(endpoint + '/signup', methods=['GET'])
+def sign_up():
+    private_key = request.args.get('private_key', type=str)
+    if not base.identify_request(private_key):
+        return 'Wrong private key. Hacking attempt!'
+    login = request.args.get('login', type=str)
+    password = request.args.get('pass', type=str)
+    # name = request.args.get('name', type=str, default='')
+    user_type = request.args.get('type', type=str, default='patron')
+    return base.create_user(login, password, user_type)
 
 
 if __name__ == '__main__':

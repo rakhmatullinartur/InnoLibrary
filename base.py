@@ -15,8 +15,8 @@ def connect():
 def execute(sql, *args, commit=False):
     db = connect()
     cur = db.cursor()
-    # print(args)
-    # print(sql % {"p": paramstyle})
+    print(args)
+    print(sql % {"p": paramstyle})
     cur.execute(sql % {"p": paramstyle}, args)
     if commit:
         db.commit()
@@ -25,6 +25,22 @@ def execute(sql, *args, commit=False):
         ans = cur.fetchall()
         db.close()
         return ans
+
+
+def create_user(*args):
+    try:
+
+        execute('INSERT INTO Users (login, password, user_type) VALUES (%(p)s, %(p)s, %(p)s)', *args, commit=True)
+        return 'Success'
+    except Exception as e:
+        return str(e)
+
+
+def identify_request(key):
+    data = execute('SELECT * FROM private_keys WHERE token = %(p)s', key)
+    if data:
+        return True
+    return False
 
 
 def is_free_login(login):
