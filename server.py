@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import base
 app = Flask(__name__)
 
@@ -27,8 +27,13 @@ def get_tasks():
 
 
 @app.route(endpoint + '/create_user', methods=['GET'])
-def check_login():
-    pass
+def create_user():
+    login = request.args.get('login')
+    password = request.args.get('password')
+    u_type = request.args.get('type')
+
+    return 'completed'
+
 
 if __name__ == '__main__':
     app.run(debug=True)
