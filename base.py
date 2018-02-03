@@ -29,9 +29,10 @@ def execute(sql, *args, commit=False):
 
 def create_user(*args):
     try:
-
-        execute('INSERT INTO Users (login, password, user_type) VALUES (%(p)s, %(p)s, %(p)s)', *args, commit=True)
-        return 'Success'
+        if is_free_login(args[0]):
+            execute('INSERT INTO Users (login, password, user_type) VALUES (%(p)s, %(p)s, %(p)s)', *args, commit=True)
+            return 'Success!'
+        return 'login already exists.'
     except Exception as e:
         return str(e)
 
@@ -49,3 +50,55 @@ def is_free_login(login):
     if data:
         return False
     return True
+
+
+def get_user(uid):
+    data = execute('SELECT * FROM Users WHERE uid = %(p)s', uid)
+    print(data)
+    docs = execute('SELECT doc_id, due_date FROM taken_documents WHERE uid = %(p)s', uid)
+    documents = []
+    print(docs)
+    for e in docs:
+        documents.append({'doc_id': e[0], 'due_date': e[1]})
+    if data:
+        data = data[0]
+        res = [
+            {'card_number': data[0],
+             'name': data[1],
+             'phone_number': data[2],
+             'login': data[3],
+             'user_type': data[5],
+             'documents': documents}
+        ]
+        return res
+    return 'not found'
+
+
+def add_document(**kwargs):
+    common =[kwargs.get('title'), ';'.join(kwargs.get('authors')), kwargs.get('price'), kwargs.get('room'), kwargs.get('level')]
+    doc_type = kwargs.get('doc_type')
+    if doc_type == 'book':
+        execute('INSERT INTO Books (title, authors, price, room, level, publisher, edition) '
+                'VALUES (%(p)s, %(p)s, %(p)s, %(p)s, %(p)s, %(p)s, %(p)s)',
+                *common,
+                kwargs.get('publisher'),
+                kwargs.get('edition'), commit=True)
+
+    elif doc_type == 'journal arcticle':
+        execute('INSERT INTO Journal_Articles (title, authors, price, room, level, journal_title, journal_publisher, journal_issue,'
+                ' issue_editor, issue_publication_date) '
+                'VALUES (%(p)s, %(p)s, %(p)s, %(p)s, %(p)s, %(p)s, %(p)s, %(p)s, %(p)s, %(p)s)',
+                ';'.join(kwargs.get('authors')),
+                *common,
+                kwargs.get('journal_title'),
+                kwargs.get('journal_publisher'),
+                kwargs.get('journal_issue'),
+                kwargs.get('issue_editor'),
+                kwargs.get('issue_publication_date'), commit=True
+                )
+    elif doc_type == 'AV':
+        execute('INSERT INTO AV_materials (title, authors, price, room, level) VALUES '
+                '(%(p)s, %(p)s, %(p)s, %(p)s, %(p)s)',
+                *common, commit=True)
+
+
