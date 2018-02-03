@@ -18,7 +18,7 @@ def sign_up():
     return base.create_user(login, password, user_type)
 
 
-@app.route(endpoint + '/sign_in', methods=['POST'])
+@app.route(endpoint + '/sign_in', methods=['GET'])
 def sign_in():
     # private_key = request.args.get('private_key', type=str)
     # if not base.identify_request(private_key):
@@ -26,7 +26,7 @@ def sign_in():
     login = request.args.get('login', type=str)
     password = request.args.get('password', type=str)
     if base.is_true_data(login, password):
-        return 'Zaebis , you woshli v account'
+        return jsonify({'login': login, 'password': password})
     else:
         return 'login or password ne verniy blya'
 
