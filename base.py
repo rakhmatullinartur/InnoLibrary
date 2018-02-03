@@ -119,3 +119,11 @@ def add_document(**kwargs):
                 *common, commit=True)
 
 
+def delete_document(doc_id, doc_type):
+    try:
+        execute(f'DELETE FROM {doc_type} WHERE doc_id = %(p)s', doc_id, commit=True)
+        return 'OK'
+    except Exception as e:
+        return str(e)
+
+
