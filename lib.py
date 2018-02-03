@@ -21,8 +21,7 @@ class User:
 
     # 555555555555555555555555
     def add_fine_for_book(self, book_name):
-        # inde =
-        # if :
+       pass
 
     def set_address(self, new_address):
         User.address = new_address
@@ -64,4 +63,4 @@ class Student(Patron):
 
 
 class Librarian(User):
-
+    pass

@@ -49,3 +49,20 @@ def is_free_login(login):
     if data:
         return False
     return True
+
+
+def is_true_data(login, password):
+    data = execute('SELECT * FROM Users WHERE login = %(p)s AND password = %(p)s', login, password)
+    if data:
+        return True
+    return False
+
+
+def get_book_info(doc_id):
+    data = execute('SELECT * FROM Books WHERE doc_id = %(p)s', doc_id)
+    if data:
+        return data
+    else:
+        return False
+def take_book(doc_id):
+    data = execute('')
