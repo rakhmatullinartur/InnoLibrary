@@ -37,6 +37,7 @@ def sign_in():
     password = request.args.get('password', type=str)
     if base.is_true_data(login, password):
         return jsonify({'Success': 'True', 'errors': 0})
+
     else:
         return jsonify({'Success': 'False', 'errors' : ['incorrect login or password']})
 
@@ -90,13 +91,37 @@ def delete_document():
 
     if request.json:
         data = request.json
-        private_key = data.get('private_key')
-        if not base.identify_request(private_key):
-            return 'Wrong private key. Hacking attempt!'
+        # private_key = data.get('private_key')
+        # if not base.identify_request(private_key):
+        #     return 'Wrong private key. Hacking attempt!'
         return base.delete_document(data.get('doc_id'), data.get('doc_type'))
     return 'no json found'
 
 
+@app.route(endpoint + 'take_document', methods=['GET'])
+def take_document():
+    if request.json:
+        data = request.json
+    #     private_key = data.get('private_key')
+    # if not base.identify_request(private_key):
+    #     return 'Wrong private key. Hacking attempt!'
+        return base.take_document(**data)
+
+
+
+@app.route(endpoint + 'some_method', methods=['GET'])
+def some_method():
+    pass
+    # if request.json:
+    #     data = request.json
+    #     private_key = data.get('private_key')
+        # if not base.identify_request(private_key):
+        #     return 'Wrong private key. Hacking attempt!'
+
+
+@app.route(endpoint + 'search', methods=['GET'])
+def search():
+    pass
 
 
 if __name__ == '__main__':

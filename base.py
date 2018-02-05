@@ -1,4 +1,6 @@
 import pymysql
+import datetime
+
 
 DB_HOST = "92.53.67.130"
 DB_USER = "remote"
@@ -127,6 +129,20 @@ def add_document(**kwargs):
 def delete_document(doc_id, doc_type):
     try:
         execute(f'DELETE FROM {doc_type} WHERE doc_id = %(p)s', doc_id, commit=True)
+        return 'OK'
+    except Exception as e:
+        return str(e)
+
+
+def take_document(**kwargs):
+    now = datetime.datetime.now()
+    due = str(now + datetime.timedelta(days=14)).split(' ')[:16]
+    try:
+        execute('INSERT INTO taken_documents (doc_id, doc_type, uid, due_date) VALUES (%(p)s, %(p)s, %(p)s, %(p)s)',
+                kwargs.get('doc_id'),
+                kwargs.get('doc_type'),
+                kwargs.get('uid'),
+                due, commit=True)
         return 'OK'
     except Exception as e:
         return str(e)
