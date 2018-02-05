@@ -21,14 +21,16 @@ def sign_up():
     # private_key = request.args.get('private_key', type=str)
     # if not base.identify_request(private_key):
     #     return 'Wrong private key. Hacking attempt!'
+    data = None
     if request.json:
         data = request.json
         # private_key = data.get('private_key')
         # if not base.identify_request(private_key):
         #     return 'Wrong private key. Hacking attempt!'
     # name = request.args.get('name', type=str, default='')
-    user_type = request.args.get('type', type=str, default='patron')
-    return jsonify(base.create_user(**data))
+    if data:
+        return jsonify(base.create_user(**data))
+    return jsonify({})
 
 
 @app.route(endpoint + '/sign_in', methods=['GET'])
