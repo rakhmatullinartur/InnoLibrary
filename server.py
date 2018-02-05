@@ -6,6 +6,16 @@ app = Flask(__name__)
 endpoint = '/innoLibrary/api'
 
 
+@app.route(endpoint + '/check', methods=['GET'])
+def check_info():
+    uid = request.args.get('uid' , type=int)
+    data = base.general_info(uid)
+    if data:
+        return jsonify(data)
+    else:
+        return 'Incorrect user id'
+
+
 @app.route(endpoint + '/signup', methods=['POST'])
 def sign_up():
     # private_key = request.args.get('private_key', type=str)
@@ -18,7 +28,7 @@ def sign_up():
     return base.create_user(login, password, user_type)
 
 
-@app.route(endpoint + '/sign_in', methods=['POST'])
+@app.route(endpoint + '/sign_in', methods=['GET'])
 def sign_in():
     # private_key = request.args.get('private_key', type=str)
     # if not base.identify_request(private_key):
@@ -26,9 +36,9 @@ def sign_in():
     login = request.args.get('login', type=str)
     password = request.args.get('password', type=str)
     if base.is_true_data(login, password):
-        return 'Zaebis , you woshli v account'
+        return jsonify({'Success': 'True', 'errors': 0})
     else:
-        return 'login or password ne verniy blya'
+        return jsonify({'Success': 'False', 'errors' : ['incorrect login or password']})
 
 
 @app.route(endpoint + '/get_doc', methods=['GET'])

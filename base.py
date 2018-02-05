@@ -2,7 +2,7 @@ import pymysql
 
 DB_HOST = "92.53.67.130"
 DB_USER = "remote"
-DB_PASSWORD = "conass"
+DB_PASSWORD = "welding"
 DB_NAME = "book_saver"
 
 paramstyle = "%s"
@@ -25,6 +25,11 @@ def execute(sql, *args, commit=False):
         ans = cur.fetchall()
         db.close()
         return ans
+
+def general_info(uid):
+    data = execute('SELECT first_name , phone_number FROM Users WHERE uid = %(p)s' , uid)
+    return data
+
 
 
 def create_user(*args):
