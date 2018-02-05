@@ -28,18 +28,26 @@ def execute(sql, *args, commit=False):
         db.close()
         return ans
 
+
 def general_info(uid):
     data = execute('SELECT first_name , phone_number FROM Users WHERE uid = %(p)s' , uid)
     return data
 
 
-
-def create_user(*args):
+def create_user(**kwargs):
     try:
-        if is_free_login(args[0]):
-            execute('INSERT INTO Users (login, password, user_type) VALUES (%(p)s, %(p)s, %(p)s)', *args, commit=True)
-            return 'Success!'
-        return 'login already exists.'
+        if is_free_login(kwargs.get('login')):
+            execute('INSERT INTO Users (first_name, last_name, email, phone_number, login, password) '
+                    'VALUES (%(p)s, %(p)s, %(p)s, %(p)s, %(p)s, %(p)s)',
+                    kwargs.get('first_name'),
+                    kwargs.get('last_name'),
+                    kwargs.get('email'),
+                    kwargs.get('phone_number'),
+                    kwargs.get('login'),
+                    kwargs.get('password'), commit=True
+                    )
+            return {'success': 'true'}
+        return {'success': 'false', 'error': 'login is busy'}
     except Exception as e:
         return str(e)
 
@@ -59,7 +67,6 @@ def is_free_login(login):
     return True
 
 
-
 def is_true_data(login, password):
     data = execute('SELECT * FROM Users WHERE login = %(p)s AND password = %(p)s', login, password)
     if data:
@@ -73,8 +80,10 @@ def get_book_info(doc_id):
         return data
     else:
         return False
+
 def take_book(doc_id):
     data = execute('')
+
 
 def get_user(uid):
     data = execute('SELECT * FROM Users WHERE uid = %(p)s', uid)

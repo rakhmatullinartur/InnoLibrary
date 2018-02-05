@@ -21,11 +21,14 @@ def sign_up():
     # private_key = request.args.get('private_key', type=str)
     # if not base.identify_request(private_key):
     #     return 'Wrong private key. Hacking attempt!'
-    login = request.args.get('login', type=str)
-    password = request.args.get('pass', type=str)
+    if request.json:
+        data = request.json
+        # private_key = data.get('private_key')
+        # if not base.identify_request(private_key):
+        #     return 'Wrong private key. Hacking attempt!'
     # name = request.args.get('name', type=str, default='')
     user_type = request.args.get('type', type=str, default='patron')
-    return base.create_user(login, password, user_type)
+    return jsonify(base.create_user(**data))
 
 
 @app.route(endpoint + '/sign_in', methods=['GET'])
@@ -78,9 +81,9 @@ def add_document():
 
     if request.json:
         data = request.json
-        private_key = data.get('private_key')
-        if not base.identify_request(private_key):
-            return 'Wrong private key. Hacking attempt!'
+        # private_key = data.get('private_key')
+        # if not base.identify_request(private_key):
+        #     return 'Wrong private key. Hacking attempt!'
         base.add_document(**data)
         return 'document added!'
     return 'no json found'
