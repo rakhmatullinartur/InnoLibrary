@@ -144,7 +144,8 @@ def checkout():
         # private_key = data.get('private_key')
         # if not base.identify_request(private_key):
         #     return 'Wrong private key. Hacking attempt!'
-
+        return base.checkout(**data)
+    return 'json not found'
 
 
 
