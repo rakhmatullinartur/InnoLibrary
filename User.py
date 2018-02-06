@@ -8,3 +8,4 @@ class User(dict):
         self.login = args[5]
         self.password = args[6]
         self.user_type = args[7]
+        self.documents = args[8]
