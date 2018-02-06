@@ -184,7 +184,7 @@ def checkout(**kwargs):
     obj = get_doc_info(doc_id, doc_type)
 
     taken_docs = get_taken_books(kwargs.get('uid'))
-    if not permit_to_checkout(taken_docs):
+    if not permit_to_checkout(taken_docs, doc_id):
         return
     execute('UPDATE {} SET checked_out = 1 WHERE doc_id = %(p)s'.format(table), doc_id, commit=True)
     data = vars(obj)
