@@ -78,6 +78,14 @@ def get_user():
     return jsonify(data)
 
 
+@app.route(endpoint + '/get_users', methods=['GET'])
+def get_all_users():
+    # private_key = request.args.get('private_key', type=str)
+    # if not base.identify_request(private_key):
+    #     return 'Wrong private key. Hacking attempt!'
+    return base.get_all_users()
+
+
 @app.route(endpoint + '/add_document', methods=['POST'])
 def add_document():
 

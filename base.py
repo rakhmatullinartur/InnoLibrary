@@ -81,8 +81,6 @@ def get_book_info(doc_id):
     else:
         return False
 
-def take_book(doc_id):
-    data = execute('')
 
 
 def get_user(uid):
@@ -95,14 +93,32 @@ def get_user(uid):
         documents.append({'doc_id': e[0], 'due_date': e[1]})
     if data:
         data = data[0]
-        res = [
-            {'card_number': data[0],
+        res = {
+             'card_number': data[0],
              'name': data[1],
              'phone_number': data[2],
              'login': data[3],
              'user_type': data[5],
              'documents': documents}
-        ]
+        return res
+    return 'not found'
+
+
+def get_all_users():
+    data = execute('SELECT * FROM Users')
+    res = []
+    if data:
+        for user in data:
+            res.append({
+                'user_id': user[0],
+                'first_name': user[1],
+                'last_name': user[2],
+                'email': user[3],
+                'phone_number': user[4],
+                'login': user[5],
+                'password': user[6],
+                'user_type': user[7]
+            })
         return res
     return 'not found'
 
