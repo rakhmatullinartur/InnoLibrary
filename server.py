@@ -99,7 +99,7 @@ def add_document():
     return 'no json found'
 
 
-@app.route(endpoint + 'delete_document', methods=['POST'])
+@app.route(endpoint + '/delete_document', methods=['POST'])
 def delete_document():
 
     if request.json:
@@ -111,7 +111,7 @@ def delete_document():
     return 'no json found'
 
 
-@app.route(endpoint + 'take_document', methods=['GET'])
+@app.route(endpoint + '/take_document', methods=['GET'])
 def take_document():
     if request.json:
         data = request.json
@@ -137,7 +137,7 @@ def search():
     pass
 
 
-@app.route(endpoint + 'checkout', methods=['POST'])
+@app.route(endpoint + '/checkout', methods=['POST'])
 def checkout():
     if request.json:
         data = request.json
