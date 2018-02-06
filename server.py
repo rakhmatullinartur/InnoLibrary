@@ -44,7 +44,7 @@ def sign_in():
         return jsonify({'Success': 'True', 'errors': 0})
 
     else:
-        return jsonify({'Success': 'False', 'errors' : ['incorrect login or password']})
+        return jsonify({'Success': 'False', 'errors': ['incorrect login or password']})
 
 
 @app.route(endpoint + '/get_documents', methods=['GET'])
@@ -91,7 +91,7 @@ def get_all_users():
     # private_key = request.args.get('private_key', type=str)
     # if not base.identify_request(private_key):
     #     return 'Wrong private key. Hacking attempt!'
-    return base.get_all_users()
+    return jsonify(base.get_all_users())
 
 
 @app.route(endpoint + '/add_document', methods=['POST'])
@@ -129,15 +129,15 @@ def take_document():
         return base.take_document(**data)
 
 
-
-@app.route(endpoint + 'some_method', methods=['GET'])
-def some_method():
-    pass
-    # if request.json:
-    #     data = request.json
-    #     private_key = data.get('private_key')
+@app.route(endpoint + '/checkout_by_author', methods=['POST'])
+def checkout_by_author():
+    if request.json:
+        data = request.json
+        # private_key = data.get('private_key')
         # if not base.identify_request(private_key):
         #     return 'Wrong private key. Hacking attempt!'
+        return jsonify(base.checkout_by_author(data.get('authors')))
+    return 'Json not found'
 
 
 @app.route(endpoint + 'search', methods=['GET'])
@@ -154,7 +154,6 @@ def checkout():
         #     return 'Wrong private key. Hacking attempt!'
         return jsonify(base.checkout(**data))
     return 'json not found'
-
 
 
 if __name__ == '__main__':

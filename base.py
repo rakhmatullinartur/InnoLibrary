@@ -1,6 +1,6 @@
 import pymysql
 import datetime
-import Book, Article, AV_materials
+import Book, Article, AV_materials, User
 
 
 DB_HOST = "92.53.67.130"
@@ -189,9 +189,15 @@ def checkout(**kwargs):
 
 
 def take_document(**kwargs):
+    data = execute('SELECT * FROM Users WHERE uid = %(p)s', kwargs.get('uid'))
+    user = create_class_object('user', data)
     now = datetime.datetime.now()
-    due = str(now + datetime.timedelta(days=14))[:16]
-
+    if user.user_type == 'student':
+        due = str(now + datetime.timedelta(days=14))[:16]
+    elif user.user_type == 'faculty':
+        due = str(now + datetime.timedelta(days=42))[:16]
+    else:
+        due = str(now + datetime.timedelta(days=7))[:16]
     try:
         execute('INSERT INTO taken_documents (doc_id, doc_type, uid, due_date) VALUES (%(p)s, %(p)s, %(p)s, %(p)s)',
                 kwargs.get('doc_id'),
@@ -201,6 +207,18 @@ def take_document(**kwargs):
         return due
     except Exception as e:
         return str(e)
+
+
+def checkout_by_author(authors):
+    data = execute('SELECT * FROM Books WHERE authors = %(p)s' , authors)
+    books = []
+    if data:
+        for e in data:
+            ex = create_class_object('book', e)
+            books.append(vars(ex))
+        return books
+    else:
+        return 'false'
 
 
 def get_table(doc_type):
@@ -222,4 +240,6 @@ def create_class_object(doc_type, mas):
         obj = AV_materials.AVmaterial(*mas)
     elif doc_type == 'article':
         obj = Article.JournalArticle(*mas)
+    elif doc_type == 'user':
+        obj = User.User(*mas)
     return obj
