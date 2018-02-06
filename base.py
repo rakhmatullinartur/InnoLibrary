@@ -184,6 +184,9 @@ def checkout(**kwargs):
     obj = get_doc_info(doc_id, doc_type)
 
     taken_docs = get_taken_books(kwargs.get('uid'))
+    # checking = execute('SELECT checked_out FROM Books WHERE doc_id = %(p)s', doc_id)
+    if obj.checked_out == 1:
+        return {'error': 'book is already checked out'}
     if not permit_to_checkout(taken_docs, doc_id):
         return {'error': 'book or its copy already taken by you'}
     execute('UPDATE {} SET checked_out = 1 WHERE doc_id = %(p)s'.format(table), doc_id, commit=True)
