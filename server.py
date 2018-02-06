@@ -47,7 +47,7 @@ def sign_in():
         return jsonify({'Success': 'False', 'errors' : ['incorrect login or password']})
 
 
-@app.route(endpoint + 'get_documents', methods='GET')
+@app.route(endpoint + '/get_documents', methods=['GET'])
 def get_all_documents():
     # private_key = request.args.get('private_key', type=str)
     # if not base.identify_request(private_key):
