@@ -265,7 +265,7 @@ def get_taken_books(uid):
         doc_id, doc_type = doc
         if doc_type == 'book':
             d = execute('SELECT * FROM Books WHERE doc_id = %(p)s', doc_id)
-            docs.append(create_class_object(doc_type, d))
+            docs.append(create_class_object(doc_type, d[0]))
     return docs
 
 
