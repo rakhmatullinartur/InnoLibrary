@@ -1,5 +1,6 @@
 import pymysql
 import datetime
+import Book, Article, AV_materials
 
 
 DB_HOST = "92.53.67.130"
@@ -74,13 +75,11 @@ def is_true_data(login, password):
     return False
 
 
-def get_book_info(doc_id):
-    data = execute('SELECT * FROM Books WHERE doc_id = %(p)s', doc_id)
-    if data:
-        return data
-    else:
-        return False
-
+def get_doc_info(doc_id, doc_type):
+    table = get_table(doc_type)
+    data = execute('SELECT * FROM {} WHERE doc_id = %(p)s'.format(table), doc_id)
+    obj = create_class_object(doc_type, data)
+    return obj
 
 
 def get_user(uid):
@@ -159,6 +158,17 @@ def delete_document(doc_id, doc_type):
         return str(e)
 
 
+def checkout(**kwargs):
+    doc_type = kwargs.get('doc_type')
+    table = get_table(doc_type)
+    doc_id = kwargs.get('doc_id')
+    execute('UPDATE {} SET checked_out = 1 WHERE doc_id = %(p)s'.format(table), doc_id, commit=True)
+    due_date = take_document(doc_id=doc_id, doc_type=doc_type, uid=kwargs.get('uid'))
+    data = vars(get_doc_info(doc_id, doc_type))
+    data['due_date'] = due_date
+    return data
+
+
 def take_document(**kwargs):
     now = datetime.datetime.now()
     due = str(now + datetime.timedelta(days=14)).split(' ')[:16]
@@ -168,8 +178,28 @@ def take_document(**kwargs):
                 kwargs.get('doc_type'),
                 kwargs.get('uid'),
                 due, commit=True)
-        return 'OK'
+        return due
     except Exception as e:
         return str(e)
 
 
+def get_table(doc_type):
+    table = ''
+    if doc_type == 'book':
+        table = 'Books'
+    elif doc_type == 'AV':
+        table = 'AV_materials'
+    elif doc_type == 'article':
+        table = 'Journal Arcticles'
+    return table
+
+
+def create_class_object(doc_type, *args):
+    obj = None
+    if doc_type == 'book':
+        obj = Book.Book(*args)
+    elif doc_type == 'AV':
+        obj = AV_materials.AVmaterial(*args)
+    elif doc_type == 'article':
+        obj = Article.JournalArticle(*args)
+    return obj

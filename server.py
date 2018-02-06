@@ -137,5 +137,16 @@ def search():
     pass
 
 
+@app.route(endpoint + 'checkout', methods=['POST'])
+def checkout():
+    if request.json:
+        data = request.json
+        # private_key = data.get('private_key')
+        # if not base.identify_request(private_key):
+        #     return 'Wrong private key. Hacking attempt!'
+
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
