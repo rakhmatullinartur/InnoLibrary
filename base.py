@@ -78,7 +78,7 @@ def is_true_data(login, password):
 def get_doc_info(doc_id, doc_type):
     table = get_table(doc_type)
     data = execute('SELECT * FROM {} WHERE doc_id = %(p)s'.format(table), doc_id)
-    obj = create_class_object(doc_type, data)
+    obj = create_class_object(doc_type, data[0])
     return obj
 
 
