@@ -47,17 +47,25 @@ def sign_in():
         return jsonify({'Success': 'False', 'errors' : ['incorrect login or password']})
 
 
-@app.route(endpoint + '/get_doc', methods=['GET'])
-def get_document():
+@app.route(endpoint + 'get_documents', methods='GET')
+def get_all_documents():
     # private_key = request.args.get('private_key', type=str)
     # if not base.identify_request(private_key):
-    # return 'Wrong private key. Hacking attempt!'
-    doc_id = request.args.get('doc_id', type=int)
-    data = base.get_book_info(doc_id)
-    if data:
-        return jsonify(data)
-    else:
-        return 'Incorrect document id'
+    #     return 'Wrong private key. Hacking attempt!'
+    return jsonify(base.get_all_documents())
+
+#
+# @app.route(endpoint + '/get_doc', methods=['GET'])
+# def get_document():
+#     # private_key = request.args.get('private_key', type=str)
+#     # if not base.identify_request(private_key):
+#     # return 'Wrong private key. Hacking attempt!'
+#     doc_id = request.args.get('doc_id', type=int)
+#     # data = base.get_book_info(doc_id)
+#     if data:
+#         return jsonify(data)
+#     else:
+#         return 'Incorrect document id'
 
 
 # @app.route(endpoint + '/take_doc', methods=['POST'])

@@ -84,12 +84,10 @@ def get_doc_info(doc_id, doc_type):
 
 def get_user(uid):
     data = execute('SELECT * FROM Users WHERE uid = %(p)s', uid)
-    print(data)
-    docs = execute('SELECT doc_id, due_date FROM taken_documents WHERE uid = %(p)s', uid)
+    docs = execute('SELECT doc_id, doc_type, due_date FROM taken_documents WHERE uid = %(p)s', uid)
     documents = []
-    print(docs)
     for e in docs:
-        documents.append({'doc_id': e[0], 'due_date': e[1]})
+        documents.append({'doc_id': e[0], 'doc_type': e[1], 'due_date': e[2]})
     if data:
         data = data[0]
         res = {
@@ -120,6 +118,27 @@ def get_all_users():
             })
         return res
     return 'not found'
+
+
+def get_all_documents():
+    data = execute('SELECT * FROM Books')
+    books = []
+    for book in data:
+        books.append(create_class_object('book', book))
+    data = execute('SELECT * FROM Journal_Articles')
+    articles = []
+    for article in data:
+        articles.append(create_class_object('article', article))
+    data = execute('SELECT * FROM AV_materials')
+    materials = []
+    for av in data:
+        materials.append(create_class_object('AV', av))
+
+    result = dict()
+    result['books'] = [vars(obj) for obj in books]
+    result['articles'] = [vars(obj) for obj in articles]
+    result['AV materials'] = [vars(obj) for obj in materials]
+    return result
 
 
 def add_document(**kwargs):
