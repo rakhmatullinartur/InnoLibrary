@@ -8,7 +8,7 @@ endpoint = '/innoLibrary/api'
 
 @app.route(endpoint + '/check', methods=['GET'])
 def check_info():
-    uid = request.args.get('uid' , type=int)
+    uid = request.args.get('uid', type=int)
     data = base.general_info(uid)
     if data:
         return jsonify(data)
@@ -44,7 +44,7 @@ def sign_in():
         return jsonify({'Success': 'True', 'errors': 0})
 
     else:
-        return jsonify({'Success': 'False', 'errors' : ['incorrect login or password']})
+        return jsonify({'Success': 'False', 'errors': ['incorrect login or password']})
 
 
 @app.route(endpoint + '/get_doc', methods=['GET'])
@@ -62,9 +62,9 @@ def get_document():
 
 # @app.route(endpoint + '/take_doc', methods=['POST'])
 # def take_document():
-    # private_key = request.args.get('private_key', type=str)
-    # if not base.identify_request(private_key):
-    # return 'Wrong private key. Hacking attempt!'
+# private_key = request.args.get('private_key', type=str)
+# if not base.identify_request(private_key):
+# return 'Wrong private key. Hacking attempt!'
 
 @app.route(endpoint + '/get_user_info', methods=['GET'])
 def get_user():
@@ -88,7 +88,6 @@ def get_all_users():
 
 @app.route(endpoint + '/add_document', methods=['POST'])
 def add_document():
-
     if request.json:
         data = request.json
         # private_key = data.get('private_key')
@@ -101,7 +100,6 @@ def add_document():
 
 @app.route(endpoint + '/delete_document', methods=['POST'])
 def delete_document():
-
     if request.json:
         data = request.json
         # private_key = data.get('private_key')
@@ -115,11 +113,10 @@ def delete_document():
 def take_document():
     if request.json:
         data = request.json
-    #     private_key = data.get('private_key')
-    # if not base.identify_request(private_key):
-    #     return 'Wrong private key. Hacking attempt!'
+        #     private_key = data.get('private_key')
+        # if not base.identify_request(private_key):
+        #     return 'Wrong private key. Hacking attempt!'
         return base.take_document(**data)
-
 
 
 @app.route(endpoint + 'some_method', methods=['GET'])
@@ -128,8 +125,8 @@ def some_method():
     # if request.json:
     #     data = request.json
     #     private_key = data.get('private_key')
-        # if not base.identify_request(private_key):
-        #     return 'Wrong private key. Hacking attempt!'
+    # if not base.identify_request(private_key):
+    #     return 'Wrong private key. Hacking attempt!'
 
 
 @app.route(endpoint + 'search', methods=['GET'])
@@ -148,6 +145,15 @@ def checkout():
     return 'json not found'
 
 
+@app.route(endpoint + '/checkout_by_author', methods=['POST'])
+def checkout_by_author():
+    if request.json:
+        data = request.json
+        # private_key = data.get('private_key')
+        # if not base.identify_request(private_key):
+        #     return 'Wrong private key. Hacking attempt!'
+        return jsonify(base.checkout_by_author(data.get('authors')))
+    return 'Jdon not found'
 
 if __name__ == '__main__':
     app.run(debug=True)

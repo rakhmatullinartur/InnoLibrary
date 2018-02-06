@@ -1,6 +1,6 @@
 import pymysql
 import datetime
-import Book, Article, AV_materials
+import Book, Article, AV_materials, jsonify
 
 
 DB_HOST = "92.53.67.130"
@@ -80,6 +80,18 @@ def get_doc_info(doc_id, doc_type):
     data = execute('SELECT * FROM {} WHERE doc_id = %(p)s'.format(table), doc_id)
     obj = create_class_object(doc_type, data[0])
     return obj
+
+
+def checkout_by_author(authors):
+    data = execute('SELECT * FROM Books WHERE authors = %(p)s' , authors)
+    books = []
+    if data:
+        for e in data:
+            ex = create_class_object('book', e)
+            books.append(vars(ex))
+        return books
+    else:
+        return 'false'
 
 
 def get_user(uid):
