@@ -194,12 +194,12 @@ def get_table(doc_type):
     return table
 
 
-def create_class_object(doc_type, *args):
+def create_class_object(doc_type, mas):
     obj = None
     if doc_type == 'book':
-        obj = Book.Book(*args)
+        obj = Book.Book(*mas)
     elif doc_type == 'AV':
-        obj = AV_materials.AVmaterial(*args)
+        obj = AV_materials.AVmaterial(*mas)
     elif doc_type == 'article':
-        obj = Article.JournalArticle(*args)
+        obj = Article.JournalArticle(*mas)
     return obj
