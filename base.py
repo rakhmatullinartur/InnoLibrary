@@ -189,7 +189,7 @@ def checkout(**kwargs):
 
 
 def take_document(**kwargs):
-    data = execute('SELECT * FROM Users WHERE uid = %(p)s', kwargs.get('uid'))
+    data = execute('SELECT * FROM Users WHERE uid = %(p)s', kwargs.get('uid'))[0]
     user = create_class_object('user', data)
     now = datetime.datetime.now()
     if user.user_type == 'student':
