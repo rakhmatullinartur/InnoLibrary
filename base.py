@@ -171,8 +171,8 @@ def checkout(**kwargs):
 
 def take_document(**kwargs):
     now = datetime.datetime.now()
-    due = str(now + datetime.timedelta(days=14)).split(' ')[:16]
-    return due
+    due = str(now + datetime.timedelta(days=14))[:16]
+
     try:
         execute('INSERT INTO taken_documents (doc_id, doc_type, uid, due_date) VALUES (%(p)s, %(p)s, %(p)s, %(p)s)',
                 kwargs.get('doc_id'),
