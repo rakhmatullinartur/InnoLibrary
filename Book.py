@@ -10,3 +10,4 @@ class Book(dict):
         self.level = args[7]
         self.checked_out = args[8]
         self.bestseller = (args[9] == 1)
+        self.reference_book = (args[10] == 1)

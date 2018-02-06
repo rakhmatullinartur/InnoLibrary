@@ -187,8 +187,11 @@ def checkout(**kwargs):
     # checking = execute('SELECT checked_out FROM Books WHERE doc_id = %(p)s', doc_id)
     if obj.checked_out == 1:
         return {'error': 'book is already checked out'}
+    if obj.reference_book:
+        return {'error': 'book is a reference book. Nobody can check it out.'}
     if not permit_to_checkout(taken_docs, doc_id):
         return {'error': 'book or its copy already taken by you'}
+
     execute('UPDATE {} SET checked_out = 1 WHERE doc_id = %(p)s'.format(table), doc_id, commit=True)
     data = vars(obj)
     due_date = take_document(doc_id=doc_id, doc_type=doc_type, uid=kwargs.get('uid'), is_best_seller=obj.bestseller)
