@@ -1,6 +1,8 @@
 import pymysql
 import datetime
 import Book, Article, AV_materials, jsonify
+import Book, Article, AV_materials, User
+
 
 
 DB_HOST = "92.53.67.130"
@@ -96,12 +98,10 @@ def checkout_by_author(authors):
 
 def get_user(uid):
     data = execute('SELECT * FROM Users WHERE uid = %(p)s', uid)
-    print(data)
-    docs = execute('SELECT doc_id, due_date FROM taken_documents WHERE uid = %(p)s', uid)
+    docs = execute('SELECT doc_id, doc_type, due_date FROM taken_documents WHERE uid = %(p)s', uid)
     documents = []
-    print(docs)
     for e in docs:
-        documents.append({'doc_id': e[0], 'due_date': e[1]})
+        documents.append({'doc_id': e[0], 'doc_type': e[1], 'due_date': e[2]})
     if data:
         data = data[0]
         res = {
@@ -132,6 +132,27 @@ def get_all_users():
             })
         return res
     return 'not found'
+
+
+def get_all_documents():
+    data = execute('SELECT * FROM Books')
+    books = []
+    for book in data:
+        books.append(create_class_object('book', book))
+    data = execute('SELECT * FROM Journal_Articles')
+    articles = []
+    for article in data:
+        articles.append(create_class_object('article', article))
+    data = execute('SELECT * FROM AV_materials')
+    materials = []
+    for av in data:
+        materials.append(create_class_object('AV', av))
+
+    result = dict()
+    result['books'] = [vars(obj) for obj in books]
+    result['articles'] = [vars(obj) for obj in articles]
+    result['AV materials'] = [vars(obj) for obj in materials]
+    return result
 
 
 def add_document(**kwargs):
@@ -174,19 +195,42 @@ def checkout(**kwargs):
     doc_type = kwargs.get('doc_type')
     table = get_table(doc_type)
     doc_id = kwargs.get('doc_id')
+
     checking = execute('SELECT checked_out FROM Books WHERE doc_id = %(p)s', doc_id)
     if checking.count() == 0:
         execute('UPDATE {} SET checked_out = 1 WHERE doc_id = %(p)s'.format(table), doc_id, commit=True)
         due_date = take_document(doc_id=doc_id, doc_type=doc_type, uid=kwargs.get('uid'))
         data = vars(get_doc_info(doc_id, doc_type))
         data['due_date'] = due_date
+
+    obj = get_doc_info(doc_id, doc_type)
+
+    taken_docs = get_taken_books(kwargs.get('uid'))
+    # checking = execute('SELECT checked_out FROM Books WHERE doc_id = %(p)s', doc_id)
+    if obj.checked_out == 1:
+        return {'error': 'book is already checked out'}
+    if obj.reference_book:
+        return {'error': 'book is a reference book. Nobody can check it out.'}
+    if not permit_to_checkout(taken_docs, doc_id):
+        return {'error': 'book or its copy already taken by you'}
+
+    execute('UPDATE {} SET checked_out = 1 WHERE doc_id = %(p)s'.format(table), doc_id, commit=True)
+    data = vars(obj)
+    due_date = take_document(doc_id=doc_id, doc_type=doc_type, uid=kwargs.get('uid'), is_best_seller=obj.bestseller)
+    data['due_date'] = due_date
     return data
 
 
 def take_document(**kwargs):
+    data = execute('SELECT * FROM Users WHERE uid = %(p)s', kwargs.get('uid'))[0]
+    user = create_class_object('user', data)
     now = datetime.datetime.now()
-    due = str(now + datetime.timedelta(days=14))[:16]
-
+    days = 21
+    if user.user_type == 'faculty':
+        days = 28
+    if kwargs.get('is_best_seller'):
+        days = 14
+    due = str(now + datetime.timedelta(days=days))[:16]
     try:
         execute('INSERT INTO taken_documents (doc_id, doc_type, uid, due_date) VALUES (%(p)s, %(p)s, %(p)s, %(p)s)',
                 kwargs.get('doc_id'),
@@ -196,6 +240,33 @@ def take_document(**kwargs):
         return due
     except Exception as e:
         return str(e)
+
+
+def permit_to_checkout(books, wanted_book_id):
+    for book in books:
+        if are_copies(book, get_doc_info(wanted_book_id, 'book')):
+            return False
+    return True
+
+
+def are_copies(doc1, doc2):
+    if doc1.title == doc2.title and doc1.authors == doc2.authors and doc1.publisher == doc2.publisher\
+            and doc1.edition == doc2.edition:
+        return True
+    return False
+
+
+def checkout_by_author(authors):
+    # fix problem if several authors in a list
+    data = execute('SELECT * FROM Books WHERE authors = %(p)s', authors)
+    books = []
+    if data:
+        for e in data:
+            ex = create_class_object('book', e)
+            books.append(vars(ex))
+        return books
+    else:
+        return 'false'
 
 
 def get_table(doc_type):
@@ -209,6 +280,23 @@ def get_table(doc_type):
     return table
 
 
+def get_user_obj(uid):
+    data = execute('SELECT * FROM Users WHERE uid = %(p)s', uid)[0]
+    obj = create_class_object('user', data)
+    return obj
+
+
+def get_taken_books(uid):
+    data = execute('SELECT doc_id, doc_type FROM taken_documents WHERE uid = %(p)s', uid)
+    docs = []
+    for doc in data:
+        doc_id, doc_type = doc
+        if doc_type == 'book':
+            d = execute('SELECT * FROM Books WHERE doc_id = %(p)s', doc_id)
+            docs.append(create_class_object(doc_type, d[0]))
+    return docs
+
+
 def create_class_object(doc_type, mas):
     obj = None
     if doc_type == 'book':
@@ -217,4 +305,6 @@ def create_class_object(doc_type, mas):
         obj = AV_materials.AVmaterial(*mas)
     elif doc_type == 'article':
         obj = Article.JournalArticle(*mas)
+    elif doc_type == 'user':
+        obj = User.User(*mas)
     return obj

@@ -1,5 +1,5 @@
 class Book(dict):
-    def __init__(self , *args):
+    def __init__(self, *args):
         self.doc_id = args[0]
         self.title = args[1]
         self.authors = args[2]
@@ -9,3 +9,5 @@ class Book(dict):
         self.room = args[6]
         self.level = args[7]
         self.checked_out = args[8]
+        self.bestseller = (args[9] == 1)
+        self.reference_book = (args[10] == 1)

@@ -47,17 +47,25 @@ def sign_in():
         return jsonify({'Success': 'False', 'errors': ['incorrect login or password']})
 
 
-@app.route(endpoint + '/get_doc', methods=['GET'])
-def get_document():
+@app.route(endpoint + '/get_documents', methods=['GET'])
+def get_all_documents():
     # private_key = request.args.get('private_key', type=str)
     # if not base.identify_request(private_key):
-    # return 'Wrong private key. Hacking attempt!'
-    doc_id = request.args.get('doc_id', type=int)
-    data = base.get_book_info(doc_id)
-    if data:
-        return jsonify(data)
-    else:
-        return 'Incorrect document id'
+    #     return 'Wrong private key. Hacking attempt!'
+    return jsonify(base.get_all_documents())
+
+#
+# @app.route(endpoint + '/get_doc', methods=['GET'])
+# def get_document():
+#     # private_key = request.args.get('private_key', type=str)
+#     # if not base.identify_request(private_key):
+#     # return 'Wrong private key. Hacking attempt!'
+#     doc_id = request.args.get('doc_id', type=int)
+#     # data = base.get_book_info(doc_id)
+#     if data:
+#         return jsonify(data)
+#     else:
+#         return 'Incorrect document id'
 
 
 # @app.route(endpoint + '/take_doc', methods=['POST'])
@@ -83,7 +91,7 @@ def get_all_users():
     # private_key = request.args.get('private_key', type=str)
     # if not base.identify_request(private_key):
     #     return 'Wrong private key. Hacking attempt!'
-    return base.get_all_users()
+    return jsonify(base.get_all_users())
 
 
 @app.route(endpoint + '/add_document', methods=['POST'])
@@ -119,6 +127,7 @@ def take_document():
         return base.take_document(**data)
 
 
+
 @app.route(endpoint + 'some_method', methods=['GET'])
 def some_method():
     pass
@@ -127,6 +136,18 @@ def some_method():
     #     private_key = data.get('private_key')
     # if not base.identify_request(private_key):
     #     return 'Wrong private key. Hacking attempt!'
+
+
+@app.route(endpoint + '/checkout_by_author', methods=['POST'])
+def checkout_by_author():
+    if request.json:
+        data = request.json
+        # private_key = data.get('private_key')
+        # if not base.identify_request(private_key):
+        #     return 'Wrong private key. Hacking attempt!'
+        return jsonify(base.checkout_by_author(data.get('authors')))
+    return 'Json not found'
+
 
 
 @app.route(endpoint + 'search', methods=['GET'])
@@ -154,6 +175,7 @@ def checkout_by_author():
         #     return 'Wrong private key. Hacking attempt!'
         return jsonify(base.checkout_by_author(data.get('authors')))
     return 'Json not found'
+
 
 if __name__ == '__main__':
     app.run(debug=True)
