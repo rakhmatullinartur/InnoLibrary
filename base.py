@@ -174,10 +174,12 @@ def checkout(**kwargs):
     doc_type = kwargs.get('doc_type')
     table = get_table(doc_type)
     doc_id = kwargs.get('doc_id')
-    execute('UPDATE {} SET checked_out = 1 WHERE doc_id = %(p)s'.format(table), doc_id, commit=True)
-    due_date = take_document(doc_id=doc_id, doc_type=doc_type, uid=kwargs.get('uid'))
-    data = vars(get_doc_info(doc_id, doc_type))
-    data['due_date'] = due_date
+    checking = execute('SELECT checked_out FROM Books WHERE doc_id = %(p)s', doc_id)
+    if checking.count() == 0:
+        execute('UPDATE {} SET checked_out = 1 WHERE doc_id = %(p)s'.format(table), doc_id, commit=True)
+        due_date = take_document(doc_id=doc_id, doc_type=doc_type, uid=kwargs.get('uid'))
+        data = vars(get_doc_info(doc_id, doc_type))
+        data['due_date'] = due_date
     return data
 
 

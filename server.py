@@ -153,7 +153,7 @@ def checkout_by_author():
         # if not base.identify_request(private_key):
         #     return 'Wrong private key. Hacking attempt!'
         return jsonify(base.checkout_by_author(data.get('authors')))
-    return 'Jdon not found'
+    return 'Json not found'
 
 if __name__ == '__main__':
     app.run(debug=True)
