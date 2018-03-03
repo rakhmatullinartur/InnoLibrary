@@ -138,18 +138,6 @@ def some_method():
     #     return 'Wrong private key. Hacking attempt!'
 
 
-@app.route(endpoint + '/checkout_by_author', methods=['POST'])
-def checkout_by_author():
-    if request.json:
-        data = request.json
-        # private_key = data.get('private_key')
-        # if not base.identify_request(private_key):
-        #     return 'Wrong private key. Hacking attempt!'
-        return jsonify(base.checkout_by_author(data.get('authors')))
-    return 'Json not found'
-
-
-
 @app.route(endpoint + 'search', methods=['GET'])
 def search():
     pass
@@ -176,6 +164,23 @@ def checkout_by_author():
         return jsonify(base.checkout_by_author(data.get('authors')))
     return 'Json not found'
 
+
+@app.route(endpoint + '/create_user', methods=['POST'])
+def create_user():
+    if request.json:
+        data = request.json
+        return jsonify(base.create_user(**data))
+
+
+@app.route(endpoint + '/modify_doc', methods=['POST'])
+def modify_doc():
+    if request.json:
+        data = request.json
+        return jsonify(base.modify_doc(**data))
+
+@app.route(endpoint + '/get_all_info', methods=['GET'])
+def get_all_info():
+    return jsonify([])
 
 if __name__ == '__main__':
     app.run(debug=True)

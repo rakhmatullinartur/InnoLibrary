@@ -85,7 +85,7 @@ def get_doc_info(doc_id, doc_type):
 
 
 def checkout_by_author(authors):
-    data = execute('SELECT * FROM Books WHERE authors = %(p)s' , authors)
+    data = execute('SELECT * FROM Books WHERE authors = %(p)s', authors)
     books = []
     if data:
         for e in data:
@@ -256,19 +256,6 @@ def are_copies(doc1, doc2):
     return False
 
 
-def checkout_by_author(authors):
-    # fix problem if several authors in a list
-    data = execute('SELECT * FROM Books WHERE authors = %(p)s', authors)
-    books = []
-    if data:
-        for e in data:
-            ex = create_class_object('book', e)
-            books.append(vars(ex))
-        return books
-    else:
-        return 'false'
-
-
 def get_table(doc_type):
     table = ''
     if doc_type == 'book':
@@ -308,3 +295,13 @@ def create_class_object(doc_type, mas):
     elif doc_type == 'user':
         obj = User.User(*mas)
     return obj
+
+
+def modify_doc(**kwargs):
+    doc_type = kwargs.pop('doc_type')
+    doc_id = kwargs.pop('doc_id')
+    for i in kwargs.items():
+        print(i)
+        execute(f'UPDATE {doc_type} SET {i[0]} = "{i[1]}" WHERE doc_id = {doc_id}', commit=True)
+
+

@@ -1,6 +1,7 @@
 import requests
 import json
-url = 'https://7fa9d914.ngrok.io/innoLibrary/api'
+
+url = 'http://127.0.0.1:5000/innoLibrary/api'
 
 # # # test case 1
 params = {'uid': 4, 'doc_id': 5, 'doc_type': 'book'}
@@ -121,3 +122,6 @@ print('Patron checks out usual book ....\n Acsess!! \n')
 print(response1.text + '\n')
 print('Patron checks out reference book ....\n Oh!! \n')
 print(response2.text)
+# params = {'doc_type': 'Books', 'doc_id': '1', 'authors': 'brucelee'}
+# response = requests.post(url + '/modify_doc', json=params)
+# print(response.text)
